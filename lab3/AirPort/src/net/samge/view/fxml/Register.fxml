@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXPasswordField?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane fx:id="main" maxHeight="466.0" maxWidth="697.0" minHeight="400.0" minWidth="600.0" prefHeight="466.0" prefWidth="697.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.samge.view.controller.RegisterViewController">
+    <children>
+        <Pane fx:id="container" layoutX="83.0" layoutY="50.0" prefHeight="338.0" prefWidth="532.0" style="-fx-background-color: #fff;">
+            <children>
+                <JFXButton fx:id="registerButton" buttonType="RAISED" layoutX="127.0" layoutY="267.0" prefHeight="32.0" prefWidth="275.0" style="-fx-background-color: #2196f3;" text="注册" textAlignment="CENTER" textFill="WHITE" />
+                <JFXTextField fx:id="email" focusColor="#09b6bc" labelFloat="true" layoutX="126.0" layoutY="91.0" prefHeight="34.0" prefWidth="275.0" promptText="邮箱" />
+                <JFXPasswordField fx:id="password" focusColor="#09b6bc" labelFloat="true" layoutX="127.0" layoutY="162.0" prefHeight="32.0" prefWidth="275.0" promptText="密码" />
+                <Text layoutX="239.0" layoutY="41.0" strokeType="OUTSIDE" strokeWidth="0.0" text="注册">
+                    <font>
+                        <Font size="25.0" />
+                    </font>
+                </Text>
+                <Line endX="116.0" layoutX="101.0" layoutY="32.0" startX="-32.0" stroke="#000000b8" />
+                <Line endX="94.0" layoutX="368.0" layoutY="32.0" startX="-55.0" stroke="#000000b9" />
+                <Text fx:id="loginOption" fill="#00a1d6" layoutX="279.0" layoutY="232.0" strokeType="OUTSIDE" strokeWidth="0.0" text="已有账号，直接登录?" />
+            </children>
+            <effect>
+                <DropShadow />
+            </effect>
+        </Pane>
+    </children>
+</AnchorPane>
