@@ -28,6 +28,7 @@
                 <Text fx:id="forgetPassword" fill="#00a1d6" layoutX="344.0" layoutY="232.0" strokeType="OUTSIDE" strokeWidth="0.0" text="忘记密码?" />
             <JFXButton fx:id="registerButton" buttonType="RAISED" layoutX="279.0" layoutY="267.0" prefHeight="32.0" prefWidth="123.0" style="-fx-background-color: white;" text="注册" textAlignment="CENTER" />
             <JFXSpinner fx:id="spinner" layoutX="100.0" layoutY="271.0" prefHeight="25.0" prefWidth="20.0" visible="false" />
+            <Text fx:id="errorPrompt" fill="RED" layoutX="130.0" layoutY="232.0" strokeType="OUTSIDE" strokeWidth="0.0" text="邮箱或密码错误" visible="false" />
             </children>
             <effect>
                 <DropShadow />

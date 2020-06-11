@@ -41,14 +41,22 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import net.samge.dbController.UserController;
+import net.samge.model.User;
 
 
 public class LoginViewController {
 
-    public Pane container;
 
+    private FlightInfoViewController parentController;
+
+    public Pane container;
+    public User currentUser;
     @FXML
     public JFXSpinner spinner;
+
+    @FXML
+    private Text errorPrompt;
 
     @FXML
     private AnchorPane main;
@@ -110,23 +118,47 @@ public class LoginViewController {
                 + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
         validator.setMessage("邮箱格式不正确!");
         email.getValidators().add(validator);
-        email.focusedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
-                if (!t1) {
-                    email.validate();
-                }
-            }
-        });
+//        email.focusedProperty().addListener(new ChangeListener<Boolean>() {
+//            @Override
+//            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
+//                if (!t1) {
+//                    email.validate();
+//                }
+//            }
+//        });
+
 
         // 当邮箱或者密码为空的时候,禁用登录按钮
         loginButton.disableProperty().bind(email.textProperty().isNotEmpty().and(password.textProperty().isNotEmpty()).not());
 
-
+        // 登录按钮点击事件
         loginButton.setOnMouseClicked(e -> {
+            // 只有当邮箱输入合法的时候才会进行登录操作
+            if (email.validate()) {
+                this.currentUser = UserController.UserLogin(email.getText(), password.getText());
+                if (this.currentUser == null) {
+                    // 登录失败
+                    this.errorPrompt.setVisible(true);
+                } else {
+                    // 如果登录成功
+                    this.parentController.setCurrentUser(this.currentUser);
+                }
+            }
+        });
 
+        // 处理登录失败后继续编辑邮箱的操作
+        email.textProperty().addListener((e, s1, s2) -> {
+            // 邮箱被编辑
+            if (errorPrompt.isVisible()) {
+                // 说明输入过错误密码，清空当前密码
+                password.setText("");
+                errorPrompt.setVisible(false);
+            }
         });
 
     }
 
+    public void setParentController(FlightInfoViewController parentController) {
+        this.parentController = parentController;
+    }
 }

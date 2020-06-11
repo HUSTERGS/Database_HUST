@@ -1,0 +1,11 @@
+.list-view {
+    -fx-selection-bar: #D3D3D3;
+    -fx-selection-bar-non-focused: #D3D3D3 ;
+    -fx-border-color: none;
+    -fx-border-width: 0;
+    -fx-background-insets: 0;
+}
+
+.list-cell:filled:selected {
+    -fx-background-insets: 0;
+}
