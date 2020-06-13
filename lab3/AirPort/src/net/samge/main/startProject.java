@@ -5,13 +5,17 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import net.samge.view.controller.FlightInfoViewController;
 
 public class startProject extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("../view/fxml/FlightInfo.fxml"));
-        primaryStage.setTitle("Hello World");
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/fxml/FlightInfo.fxml"));
+        Parent root = loader.load();
+        FlightInfoViewController controller = loader.getController();
+        controller.primaryStage = primaryStage;
+        primaryStage.setTitle("航班预定系统");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
     }

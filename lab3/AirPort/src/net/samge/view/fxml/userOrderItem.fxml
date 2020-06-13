@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<HBox fx:id="hbox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="60.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Text fx:id="companyName" strokeType="OUTSIDE" strokeWidth="0.0" text="中国联合航空" textAlignment="CENTER">
+         <HBox.margin>
+            <Insets right="20.0" />
+         </HBox.margin>
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Text>
+      <Text fx:id="flightDate" strokeType="OUTSIDE" strokeWidth="0.0" text="2020/10/1" />
+      <VBox alignment="BOTTOM_CENTER" prefHeight="200.0" prefWidth="100.0">
+         <children>
+            <Text fx:id="startTime" strokeType="OUTSIDE" strokeWidth="0.0" text="6:00" textAlignment="CENTER">
+               <font>
+                  <Font name="System Bold Italic" size="27.0" />
+               </font>
+            </Text>
+            <Text fx:id="startCity" strokeType="OUTSIDE" strokeWidth="0.0" text="上海" />
+         </children>
+      </VBox>
+      <Line endX="139.5" startX="60.0" />
+      <VBox alignment="BOTTOM_CENTER" layoutX="183.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0">
+         <children>
+            <Text fx:id="endTime" strokeType="OUTSIDE" strokeWidth="0.0" text="6:00" textAlignment="CENTER">
+               <font>
+                  <Font name="System Bold Italic" size="27.0" />
+               </font>
+            </Text>
+            <Text fx:id="endCity" strokeType="OUTSIDE" strokeWidth="0.0" text="武汉" />
+         </children>
+      </VBox>
+      <Text fx:id="cost" fill="#dab006" layoutX="122.0" layoutY="24.0" strokeType="OUTSIDE" strokeWidth="0.0" text="500" textAlignment="CENTER" wrappingWidth="100.0">
+         <HBox.margin>
+            <Insets right="20.0" />
+         </HBox.margin>
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Text>
+      <JFXButton fx:id="orderButton" style="-fx-background-color: #2196f3;" text="退订" textFill="WHITE">
+         <HBox.margin>
+            <Insets />
+         </HBox.margin>
+      </JFXButton>
+   </children>
+   <opaqueInsets>
+      <Insets />
+   </opaqueInsets>
+</HBox>

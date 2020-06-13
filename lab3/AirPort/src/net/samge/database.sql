@@ -43,8 +43,55 @@ create table `Order`
 -- 3. 航班座位情况表
 
 
+
+-- 4. 取票通知表
+drop table if exists `Notification`;
+create table `Notification`
+(
+    `Oid`      int     NOT NULL,               -- 对应订单
+    `Received` boolean NOT NULL,               -- 是否已经确认并缴费
+    `NotiDate` datetime NOT NULL ,             -- 通知时间
+
+    CONSTRAINT `order_oid` foreign key (`Oid`) references `Order` (`Oid`) ON DELETE RESTRICT ON UPDATE RESTRICT
+);
+
+
 select *
 from PlaneInfo
 where SStation = "上海"
   and AStation = "武汉"
-  and date(STime) > "2020/10/1" order by ATime;
+  and date(STime) > "2020/10/1"
+order by ATime;
+
+
+insert into PlaneInfo (SStation, AStation, STime, ATime, MaxCap, Company, Cost)
+VALUES ("上海", "武汉", now(), now(), 20, "中国航空公司", 400);
+
+-- 判断某一个航班是否满员
+select count(*)
+from `Order`
+where Pid = 1
+  and Canceled = false;
+
+select count(*)
+from `Order`
+where Canceled = false
+  and Pid = 1;
+
+insert into Users (isAdmin, Email, Password, Username)
+VALUES (false, "1@qq.com", "aaa", "哈哈哈");
+
+insert into `Order` (Uid, Pid, Canceled)
+VALUES (1, 1, false);
+
+select PlaneInfo.*, `Order`.Canceled, `Order`.Oid
+from `Order`, `PlaneInfo`
+where `Order`.Pid = PlaneInfo.Pid and
+      `Order`.Uid = 1
+
+update Order set Canceled=true where Oid =1;
+
+select * from `Notification`, `Order` where `Order`.Oid =Notification.Oid and
+                                            `Order`.Uid = 1;
+
+

@@ -8,11 +8,20 @@ import com.jfoenix.controls.JFXButton;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import net.samge.dbController.OrderController;
+import net.samge.dbController.PlaneInfoController;
+import net.samge.model.PlaneInfo;
+import net.samge.utils.Toast;
 
 public class FlightInfoListItem {
 
@@ -49,11 +58,45 @@ public class FlightInfoListItem {
         return this.hbox;
     }
 
-    public FlightInfoListItem() {
+    public FlightInfoListItem(PlaneInfo info, FlightInfoViewController superController, Stage superStage) {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/flightInfoItem.fxml"));
         loader.setController(this);
+
         try {
             loader.load();
+            companyName.setText(info.getCompany());
+            leaveTime.setText(new SimpleDateFormat("HH:mm").format(info.getSTime()));
+            arriveTime.setText(new SimpleDateFormat("HH:mm").format(info.getATime()));
+            cost.setText(Long.toString(info.getCost()));
+
+            if (PlaneInfoController.isPlaneFull(info)) {
+                // 如果航班已经满了
+                orderButton.setDisable(true);
+                orderButton.setText("人数已满");
+            } else {
+                orderButton.setOnMouseClicked(e -> {
+                    // 如果被点击
+                    if (superController.currentUser == null) {
+                        // 如果主页面并没有登录，那么就进行登录操作
+                        superController.loginButton.fire();
+                        System.out.println("未登录用户尝试订购");
+                        Toast.makeText(superStage, "请先进行登录", 3500, 500, 500);
+                    } else {
+                        // 如果主页已经登陆了，那么就进行相应的插入操作，登记用户订购机票情况
+//                        Toast.makeText();
+                        if (OrderController.order(superController.currentUser.getUid(), info.getPid())) {
+                            Toast.makeText(superStage, "订购成功", 3500, 500, 500);
+                            superController.updateList(PlaneInfoController.getPlaneInfos(
+                                    DateTimeFormatter.ofPattern("yyyy/MM/dd").format(superController.leaveDate.getValue()),
+                                    superController.leaveCityList.getValue().toString(),
+                                    superController.returnCityList.getValue().toString()));
+                        } else {
+
+                        }
+
+                    }
+                });
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -86,11 +86,13 @@ public class PlaneInfo {
         this.cost = cost;
     }
 
-    public PlaneInfo(String sStation, String aStation, Timestamp sTime, Timestamp aTime, String company, long cost) {
+    public PlaneInfo(long pid, String sStation, String aStation, Timestamp sTime, Timestamp aTime, long maxCap, String company, long cost) {
+        this.pid = pid;
         this.sStation = sStation;
         this.aStation = aStation;
         this.sTime = sTime;
         this.aTime = aTime;
+        this.maxCap = maxCap;
         this.company = company;
         this.cost = cost;
     }
