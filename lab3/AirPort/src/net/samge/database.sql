@@ -65,7 +65,7 @@ order by ATime;
 
 
 insert into PlaneInfo (SStation, AStation, STime, ATime, MaxCap, Company, Cost)
-VALUES ("上海", "武汉", now(), now(), 20, "中国航空公司", 400);
+VALUES ("上海", "武汉", "2020-06-16 23:03:49", "2020-06-16 23:03:49", 20, "中国航空公司", 400);
 
 -- 判断某一个航班是否满员
 select count(*)
@@ -93,5 +93,19 @@ update Order set Canceled=true where Oid =1;
 
 select * from `Notification`, `Order` where `Order`.Oid =Notification.Oid and
                                             `Order`.Uid = 1;
+
+
+select * from Users;
+select * from PlaneInfo;
+select * from `Order`;
+-- 用于生成通知
+drop trigger if exists generateNotification;
+create trigger generateNotification after insert on `Order`
+    for each row
+    begin
+    insert into Notification (Oid, Received, NotiDate)
+    select new.Oid, false, date(PlaneInfo.STime) from PlaneInfo where PlaneInfo.Pid = new.Pid;
+end
+
 
 

@@ -37,7 +37,7 @@ public class UserCenterController {
     public User currentUser;
     public Text currentUserText;
     public AnchorPane main;
-    public JFXListView<String> notificationList;
+    public JFXListView<Notification> notificationList;
 
 
     @FXML // ResourceBundle that was given to the FXMLLoader
@@ -66,6 +66,9 @@ public class UserCenterController {
 
     @FXML // fx:id="returnButton"
     private JFXButton returnButton; // Value injected by FXMLLoader
+
+    private Stage noticeStage;
+    private NotificationPanelController noticeController;
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
     void initialize() {
@@ -106,9 +109,30 @@ public class UserCenterController {
         });
 
 
+        // 用户点击时,弹出通知窗口
 
+        notificationList.setOnMouseClicked(e -> {
+            Notification notice = notificationList.getSelectionModel().getSelectedItem();
+            try {
+                if (this.noticeStage == null) {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/NotificationPanel.fxml"));
+                    Parent target = loader.load();
+                    this.noticeController = loader.getController();
+                    this.noticeController.setParentController(this);
+                    this.noticeController.setNotice(notice);
+                    this.noticeController.getReady();
+                    Scene loginScene = new Scene(target);
+                    this.noticeStage = new Stage();
+                    this.noticeStage.setScene(loginScene);
+                    this.noticeStage.show();
+                } else {
+                    noticeStage.show();
+                }
 
-
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        });
     }
 
     public void setCurrentUser(User user) {
@@ -117,6 +141,11 @@ public class UserCenterController {
 //        updateList(UserController.getAllOrdersOfUser(currentUser));
     }
 
+    public void UserComfirm() {
+        // 关闭页面
+        noticeStage.close();
+        updateNoticeList();
+    }
 
     static class InfoCell extends ListCell<String> {
 //        public static Stage primaryStage;
@@ -145,14 +174,13 @@ public class UserCenterController {
 
     public void updateNoticeList() {
         ArrayList<Notification> notices = UserController.getAllNotifications(currentUser);
-
+        notificationList.getItems().clear();
         for (Notification notice : notices) {
             Order order = OrderController.getOrder(notice.getOid());
             PlaneInfo planeInfo = PlaneInfoController.getPlaneInfo(order.getPid());
-            StringBuilder builder = new StringBuilder();
-            builder.append("您在").append(planeInfo.getSTime()).append("从").append(planeInfo.getSStation())
-                    .append(planeInfo.getAStation()).append("即将要出发了，请及时进行交款取票操作");
-            notificationList.getItems().add(builder.toString());
+            notice.setInfo(planeInfo);
+            notice.setOrder(order);
+            notificationList.getItems().add(notice);
         }
     }
 }

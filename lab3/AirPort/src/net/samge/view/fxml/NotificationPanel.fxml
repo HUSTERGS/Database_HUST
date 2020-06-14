@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane fx:id="main" prefHeight="288.0" prefWidth="385.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.samge.view.controller.NotificationPanelController">
+   <children>
+      <TextArea fx:id="notificationText" editable="false" layoutX="24.0" layoutY="25.0" prefHeight="240.0" prefWidth="174.0" />
+      <JFXButton fx:id="comfirmButton" buttonType="RAISED" layoutX="255.0" layoutY="237.0" style="-fx-background-color: #2196f3;" text="确认并缴费" textFill="WHITE" />
+   </children>
+</AnchorPane>

@@ -186,6 +186,7 @@ public class FlightInfoViewController {
                 UserCenterController controller = loader.getController();
                 controller.setCurrentUser(currentUser);
                 controller.updateList(UserController.getAllOrdersOfUser(currentUser));
+                controller.updateNoticeList();
                 Stage stage = (Stage) main.getScene().getWindow();
                 stage.setScene(new Scene(newRoot));
             } catch (IOException e) {

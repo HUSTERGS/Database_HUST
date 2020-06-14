@@ -38,7 +38,7 @@
          <font>
             <Font size="20.0" />
          </font></Text>
-      <JFXButton fx:id="returnOrder" style="-fx-background-color: #2196f3;" text="订购" textFill="WHITE">
+      <JFXButton fx:id="orderButton" style="-fx-background-color: #2196f3;" text="订购" textFill="WHITE">
          <HBox.margin>
             <Insets />
          </HBox.margin></JFXButton>
