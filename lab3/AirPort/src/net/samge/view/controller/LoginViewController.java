@@ -91,6 +91,7 @@ public class LoginViewController {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/Register.fxml"));
                 Parent newRoot = loader.load();
                 RegisterViewController controller = loader.getController();
+                controller.setParentController(parentController);
                 Pane view2 = controller.container;
                 Pane view1 = container;
                 AnchorPane root = main;

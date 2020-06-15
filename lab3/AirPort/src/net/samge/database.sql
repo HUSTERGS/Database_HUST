@@ -43,14 +43,13 @@ create table `Order`
 -- 3. 航班座位情况表
 
 
-
 -- 4. 取票通知表
 drop table if exists `Notification`;
 create table `Notification`
 (
-    `Oid`      int     NOT NULL,               -- 对应订单
-    `Received` boolean NOT NULL,               -- 是否已经确认并缴费
-    `NotiDate` datetime NOT NULL ,             -- 通知时间
+    `Oid`      int      NOT NULL, -- 对应订单
+    `Received` boolean  NOT NULL, -- 是否已经确认并缴费
+    `NotiDate` datetime NOT NULL, -- 通知时间
 
     CONSTRAINT `order_oid` foreign key (`Oid`) references `Order` (`Oid`) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
@@ -79,33 +78,79 @@ where Canceled = false
   and Pid = 1;
 
 insert into Users (isAdmin, Email, Password, Username)
-VALUES (false, "1@qq.com", "aaa", "哈哈哈");
+VALUES (true, "admin@qq.com", "admin", "管理员");
 
 insert into `Order` (Uid, Pid, Canceled)
 VALUES (1, 1, false);
 
 select PlaneInfo.*, `Order`.Canceled, `Order`.Oid
-from `Order`, `PlaneInfo`
-where `Order`.Pid = PlaneInfo.Pid and
-      `Order`.Uid = 1
+from `Order`,
+     `PlaneInfo`
+where `Order`.Pid = PlaneInfo.Pid
+  and `Order`.Uid = 1
 
-update Order set Canceled=true where Oid =1;
+update Order
+set Canceled= true
+where Oid = 1;
 
-select * from `Notification`, `Order` where `Order`.Oid =Notification.Oid and
-                                            `Order`.Uid = 1;
+select *
+from `Notification`,
+     `Order`
+where `Order`.Oid = Notification.Oid
+  and `Order`.Uid = 1;
 
 
-select * from Users;
-select * from PlaneInfo;
-select * from `Order`;
+-- 时间在过去,并且已经缴费的人,才能计算满座率
+select PlaneInfo.Pid, PlaneInfo.SStation, PlaneInfo.AStation, date(PlaneInfo.STime) `SDate`, PlaneInfo.MaxCap, count(*) `Count`
+from Notification,
+     PlaneInfo,
+     `Order`
+where PlaneInfo.Pid = `Order`.Pid
+  and PlaneInfo.STime < now()
+  and Notification.Oid = `Order`.Oid
+  and Notification.Received = true
+group by PlaneInfo.Pid;
+
+-- 时间在未来,并且order没有取消的人,才能计算预定情况
+
+select PlaneInfo.Pid, PlaneInfo.SStation, PlaneInfo.AStation, date(PlaneInfo.STime) `SDate`, PlaneInfo.MaxCap, count(*) `Count`
+from  PlaneInfo,
+     `Order`
+where PlaneInfo.Pid = `Order`.Pid
+  and PlaneInfo.STime > now()
+  and `Order`.Canceled = false
+group by PlaneInfo.Pid;
+
+
+select PlaneInfo.Pid, PlaneInfo.SStation, PlaneInfo.AStation, date(PlaneInfo.STime), PlaneInfo.Cost from PlaneInfo, `Order`, Users, Notification
+where PlaneInfo.Pid = `Order`.Pid and
+      `Order`.Uid = Users.Uid and
+      `Order`.Canceled = false and
+      Notification.Received = true and
+      Notification.Oid = `Order`.Oid and
+      Users.Uid = 1;
+
+select *
+from Users;
+select *
+from PlaneInfo;
+select *
+from `Order`;
 -- 用于生成通知
 drop trigger if exists generateNotification;
-create trigger generateNotification after insert on `Order`
+create trigger generateNotification
+    after insert
+    on `Order`
     for each row
-    begin
+begin
     insert into Notification (Oid, Received, NotiDate)
-    select new.Oid, false, date(PlaneInfo.STime) from PlaneInfo where PlaneInfo.Pid = new.Pid;
+    select new.Oid, false, date(PlaneInfo.STime)
+    from PlaneInfo
+    where PlaneInfo.Pid = new.Pid;
 end
+
+
+
 
 
 

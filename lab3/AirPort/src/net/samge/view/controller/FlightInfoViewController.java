@@ -165,6 +165,23 @@ public class FlightInfoViewController {
      * @param currentUser
      */
     public void setCurrentUser(User currentUser) {
+
+        if (loginStage != null) {
+            loginStage.close();
+        }
+
+        if (currentUser.getIsAdmin() != 0) {
+            // 如果是管理员
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/AdminPanel.fxml"));
+                Parent target = loader.load();
+                this.loginStage = null;
+                main.getChildren().setAll(target);
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+            return ;
+        }
         if (loginStage != null) {
             Toast.makeText(primaryStage, "登录成功", 3500, 500, 500);
         }
@@ -187,6 +204,7 @@ public class FlightInfoViewController {
                 controller.setCurrentUser(currentUser);
                 controller.updateList(UserController.getAllOrdersOfUser(currentUser));
                 controller.updateNoticeList();
+                controller.updateTable();
                 Stage stage = (Stage) main.getScene().getWindow();
                 stage.setScene(new Scene(newRoot));
             } catch (IOException e) {
@@ -204,9 +222,7 @@ public class FlightInfoViewController {
         });
 
         userNodeList.setSpacing(10);
-        if (loginStage != null) {
-            loginStage.close();
-        }
+
 
     }
 

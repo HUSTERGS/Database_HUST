@@ -17,9 +17,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.Tab;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
@@ -38,6 +37,8 @@ public class UserCenterController {
     public Text currentUserText;
     public AnchorPane main;
     public JFXListView<Notification> notificationList;
+    public Text totalPrice;
+    public TableView<PriceItem> priceTable;
 
 
     @FXML // ResourceBundle that was given to the FXMLLoader
@@ -67,7 +68,7 @@ public class UserCenterController {
     @FXML // fx:id="returnButton"
     private JFXButton returnButton; // Value injected by FXMLLoader
 
-    private Stage noticeStage;
+    public Stage noticeStage;
     private NotificationPanelController noticeController;
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
@@ -112,7 +113,8 @@ public class UserCenterController {
         // 用户点击时,弹出通知窗口
 
         notificationList.setOnMouseClicked(e -> {
-            Notification notice = notificationList.getSelectionModel().getSelectedItem();
+            Notification notice = notificationList.getItems().get(notificationList.getSelectionModel().getSelectedIndex());
+            System.out.println(notice);
             try {
                 if (this.noticeStage == null) {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/NotificationPanel.fxml"));
@@ -120,11 +122,14 @@ public class UserCenterController {
                     this.noticeController = loader.getController();
                     this.noticeController.setParentController(this);
                     this.noticeController.setNotice(notice);
+                    System.out.println("设置后" + this.noticeController.notice);
                     this.noticeController.getReady();
+                    System.out.println("getReady后" + this.noticeController.notice);
                     Scene loginScene = new Scene(target);
                     this.noticeStage = new Stage();
                     this.noticeStage.setScene(loginScene);
                     this.noticeStage.show();
+                    this.noticeStage = null;
                 } else {
                     noticeStage.show();
                 }
@@ -182,5 +187,19 @@ public class UserCenterController {
             notice.setOrder(order);
             notificationList.getItems().add(notice);
         }
+    }
+
+    public void updateTable() {
+        ((TableColumn) priceTable.getColumns().get(0)).setCellValueFactory(new PropertyValueFactory<PriceItem, String>("pid"));
+        ((TableColumn) priceTable.getColumns().get(1)).setCellValueFactory(new PropertyValueFactory<PriceItem, String>("c1"));
+        ((TableColumn) priceTable.getColumns().get(2)).setCellValueFactory(new PropertyValueFactory<PriceItem, String>("c2"));
+        ((TableColumn) priceTable.getColumns().get(3)).setCellValueFactory(new PropertyValueFactory<PriceItem, String>("date"));
+        ((TableColumn) priceTable.getColumns().get(4)).setCellValueFactory(new PropertyValueFactory<PriceItem, String>("cost"));
+        priceTable.getItems().addAll(OrderController.getAllBillingRecord(currentUser.getUid()));
+        long temp = 0;
+        for (PriceItem item : priceTable.getItems()) {
+            temp += item.getCost();
+        }
+        totalPrice.setText("总价格" + temp);
     }
 }

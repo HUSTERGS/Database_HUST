@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import com.jfoenix.validation.RegexValidator;
 import com.sun.corba.se.spi.ior.Writeable;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
@@ -31,10 +32,14 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import net.samge.dbController.UserController;
+import net.samge.model.User;
 
 public class RegisterViewController {
 
     public Pane container;
+    public Text errorPrompt;
+    private FlightInfoViewController parentController;
 
     @FXML
     private AnchorPane main;
@@ -87,5 +92,40 @@ public class RegisterViewController {
             }
         });
 
+        RegexValidator validator = new RegexValidator();
+        validator.setRegexPattern("^[_A-Za-z0-9-+]+(\\.[_A-Za-z0-9-]+)*@"
+                + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+        validator.setMessage("邮箱格式不正确!");
+        email.getValidators().add(validator);
+
+        registerButton.disableProperty().bind(email.textProperty().isNotEmpty().and(password.textProperty().isNotEmpty()).not());
+
+        email.textProperty().addListener((e, s1, s2) -> {
+            // 邮箱被编辑
+            if (errorPrompt.isVisible()) {
+                // 说明输入过错误密码，清空当前密码
+                password.setText("");
+                errorPrompt.setVisible(false);
+            }
+        });
+
+
+        registerButton.setOnMouseClicked(e -> {
+            // 只有当邮箱输入合法的时候才会进行登录操作
+            if (email.validate()) {
+                User currentUser = UserController.UserRegister(email.getText(), password.getText());
+                if (currentUser == null) {
+                    // 注册失败
+                    this.errorPrompt.setVisible(true);
+                } else {
+                    // 注册成功
+                    this.parentController.setCurrentUser(currentUser);
+                }
+            }
+        });
+    }
+
+    public void setParentController(FlightInfoViewController parentController) {
+        this.parentController = parentController;
     }
 }

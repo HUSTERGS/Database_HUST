@@ -25,6 +25,7 @@
                 <Line endX="116.0" layoutX="101.0" layoutY="32.0" startX="-32.0" stroke="#000000b8" />
                 <Line endX="94.0" layoutX="368.0" layoutY="32.0" startX="-55.0" stroke="#000000b9" />
                 <Text fx:id="loginOption" fill="#00a1d6" layoutX="279.0" layoutY="232.0" strokeType="OUTSIDE" strokeWidth="0.0" text="已有账号，直接登录?" />
+            <Text fx:id="errorPrompt" fill="RED" layoutX="130.0" layoutY="232.0" strokeType="OUTSIDE" strokeWidth="0.0" text="邮箱已被使用" visible="false" />
             </children>
             <effect>
                 <DropShadow />

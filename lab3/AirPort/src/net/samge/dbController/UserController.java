@@ -102,4 +102,23 @@ public class UserController {
         }
         return result;
     }
+
+    public static User UserRegister(String email, String password) {
+        if (UserLogin(email, password) != null) {
+            return null;
+        }
+        String SQL = "insert into Users (isAdmin, Email, Password, Username) VALUES (false, ?, ? ,'default')";
+        try {
+            Connection conn = DBConnection.getDBConnection().getConnection();
+            PreparedStatement stm = conn.prepareStatement(SQL);
+            stm.setObject(1, email);
+            stm.setObject(2,password);
+            stm.executeUpdate();
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+        return UserLogin(email, password);
+    }
+
+
 }

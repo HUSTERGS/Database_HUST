@@ -1,9 +1,11 @@
 package net.samge.view.controller;
 
 import com.jfoenix.controls.JFXButton;
+import javafx.event.ActionEvent;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
 import java.net.URL;
+import java.sql.Timestamp;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import net.samge.dbController.NotificationController;
@@ -52,12 +54,21 @@ public class NotificationPanelController {
             // 如果已经取消了或者已经缴费,则禁用按钮
             comfirmButton.setDisable(true);
             comfirmButton.setText("缴费成功");
-        } else {
+        } else if (notice.getInfo().getSTime().before(new Timestamp(System.currentTimeMillis()))) {
+            comfirmButton.setDisable(true);
+            comfirmButton.setText("已超时");
+        }
+        else {
             comfirmButton.setOnMouseClicked(e -> {
                 // 进行插入以及账单处理
                 NotificationController.noticeUser(this.notice);
                 superController.UserComfirm();
+                superController.updateNoticeList();
+                superController.noticeStage.close();
+                superController.noticeStage = null;
             });
         }
+
     }
+
 }

@@ -8,6 +8,7 @@ import com.jfoenix.controls.JFXButton;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
@@ -68,6 +69,21 @@ public class FlightInfoListItem {
             leaveTime.setText(new SimpleDateFormat("HH:mm").format(info.getSTime()));
             arriveTime.setText(new SimpleDateFormat("HH:mm").format(info.getATime()));
             cost.setText(Long.toString(info.getCost()));
+
+            if (info.getSTime().before(new Timestamp(System.currentTimeMillis()))) {
+                // 早已起飞
+                orderButton.setDisable(true);
+                return;
+            }
+
+            if (superController.currentUser != null) {
+                if (OrderController.getOrderOfUser(info.getPid(), superController.currentUser.getUid())) {
+                    // 如果已经订购
+                    orderButton.setDisable(true);
+                    orderButton.setText("已订购");
+                    return;
+                }
+            }
 
             if (PlaneInfoController.isPlaneFull(info)) {
                 // 如果航班已经满了

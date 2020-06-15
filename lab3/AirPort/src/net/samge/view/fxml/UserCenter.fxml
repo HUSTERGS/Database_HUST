@@ -5,6 +5,8 @@
 <?import com.jfoenix.controls.JFXNodesList?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -28,10 +30,29 @@
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
                         <JFXListView fx:id="notificationList" prefHeight="392.0" prefWidth="697.0" />
+                        <JFXListView prefHeight="391.0" prefWidth="697.0" />
                      </children>
                   </AnchorPane>
             </content>
           </Tab>
+            <Tab text="账单">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TableView fx:id="priceTable" layoutY="34.0" prefHeight="358.0" prefWidth="697.0">
+                          <columns>
+                            <TableColumn prefWidth="75.0" text="航班编号" />
+                            <TableColumn prefWidth="75.0" text="起飞城市" />
+                              <TableColumn prefWidth="75.0" text="目的城市" />
+                              <TableColumn prefWidth="116.0" text="日期" />
+                              <TableColumn prefWidth="84.0" text="花费" />
+                          </columns>
+                        </TableView>
+                        <Text fx:id="totalPrice" layoutX="498.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="总花费" />
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
         </tabs>
       </TabPane>
       <JFXNodesList fx:id="userNodeList" alignment="TOP_RIGHT" layoutX="652.0" layoutY="6.0" nodeOrientation="RIGHT_TO_LEFT" style="-fx-border-color: none;">
@@ -45,7 +66,7 @@
             <JFXButton fx:id="logoutButton" style="-fx-background-color: white;" text="退出登录" />
          </children>
       </JFXNodesList>
-      <JFXButton fx:id="returnButton" buttonType="RAISED" layoutX="14.0" layoutY="8.0" style="-fx-background-color: #2196f3;" text="返回" textFill="WHITE" />
+      <JFXButton fx:id="returnButton" layoutX="14.0" layoutY="8.0" style="-fx-background-color: #2196f3;" text="返回" textFill="WHITE" />
       <Text fx:id="currentUserText" layoutX="321.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="用户 葛松" textAlignment="CENTER" />
    </children>
 </AnchorPane>
