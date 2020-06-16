@@ -40,7 +40,6 @@ create table `Order`
     CONSTRAINT `plane_uid` foreign key (`Pid`) references `PlaneInfo` (`Pid`) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
--- 3. 航班座位情况表
 
 
 -- 4. 取票通知表
@@ -55,16 +54,19 @@ create table `Notification`
 );
 
 
-select *
-from PlaneInfo
-where SStation = "上海"
-  and AStation = "武汉"
-  and date(STime) > "2020/10/1"
-order by ATime;
-
+-- 插入航班信息
 
 insert into PlaneInfo (SStation, AStation, STime, ATime, MaxCap, Company, Cost)
-VALUES ("上海", "武汉", "2020-06-16 23:03:49", "2020-06-16 23:03:49", 20, "中国航空公司", 400);
+VALUES ("上海", "武汉", "2020-06-16 18:03:49", "2020-06-16 22:03:49", 20, "中国航空公司", 400);
+
+insert into PlaneInfo (SStation, AStation, STime, ATime, MaxCap, Company, Cost)
+VALUES ("上海", "重庆", "2020-06-18 18:50:00", "2020-06-18 21:45:00", 25, "四川航空", 600);
+
+insert into PlaneInfo (SStation, AStation, STime, ATime, MaxCap, Company, Cost)
+VALUES ("上海", "重庆", "2020-06-18 19:15:00", "2020-06-18 22:15:00", 10, "东方航空", 600);
+
+insert into PlaneInfo (SStation, AStation, STime, ATime, MaxCap, Company, Cost)
+VALUES ("武汉", "重庆", "2020-06-17 07:20:00", "2020-06-17 08:55:00", 2, "测试人数", 620);
 
 -- 判断某一个航班是否满员
 select count(*)
@@ -77,27 +79,14 @@ from `Order`
 where Canceled = false
   and Pid = 1;
 
+
+-- 管理员用户
 insert into Users (isAdmin, Email, Password, Username)
 VALUES (true, "admin@qq.com", "admin", "管理员");
+-- 普通用户
+insert into Users (isAdmin, Email, Password, Username) VALUES (false, "test@test.com", "test", "测试用户1");
 
-insert into `Order` (Uid, Pid, Canceled)
-VALUES (1, 1, false);
 
-select PlaneInfo.*, `Order`.Canceled, `Order`.Oid
-from `Order`,
-     `PlaneInfo`
-where `Order`.Pid = PlaneInfo.Pid
-  and `Order`.Uid = 1
-
-update Order
-set Canceled= true
-where Oid = 1;
-
-select *
-from `Notification`,
-     `Order`
-where `Order`.Oid = Notification.Oid
-  and `Order`.Uid = 1;
 
 
 -- 时间在过去,并且已经缴费的人,才能计算满座率
@@ -122,20 +111,6 @@ where PlaneInfo.Pid = `Order`.Pid
 group by PlaneInfo.Pid;
 
 
-select PlaneInfo.Pid, PlaneInfo.SStation, PlaneInfo.AStation, date(PlaneInfo.STime), PlaneInfo.Cost from PlaneInfo, `Order`, Users, Notification
-where PlaneInfo.Pid = `Order`.Pid and
-      `Order`.Uid = Users.Uid and
-      `Order`.Canceled = false and
-      Notification.Received = true and
-      Notification.Oid = `Order`.Oid and
-      Users.Uid = 1;
-
-select *
-from Users;
-select *
-from PlaneInfo;
-select *
-from `Order`;
 -- 用于生成通知
 drop trigger if exists generateNotification;
 create trigger generateNotification

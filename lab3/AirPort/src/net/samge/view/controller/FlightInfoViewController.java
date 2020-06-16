@@ -219,6 +219,7 @@ public class FlightInfoViewController {
             userNodeList.addAnimatedNode(this.exitButton);
             userNodeList.setSpacing(10);
             this.currentUser = null;
+            this.flightInfoList.getItems().clear();
         });
 
         userNodeList.setSpacing(10);
