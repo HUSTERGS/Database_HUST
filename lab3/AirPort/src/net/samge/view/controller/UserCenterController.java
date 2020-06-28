@@ -1,18 +1,16 @@
 package net.samge.view.controller;
 
-/**
- * Sample Skeleton for 'UserCenter.fxml' Controller Class
- */
 
 
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXListView;
-import com.jfoenix.controls.JFXNodesList;
+import com.jfoenix.controls.*;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+
+import com.jfoenix.validation.RegexValidator;
+import com.jfoenix.validation.base.ValidatorBase;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -28,6 +26,7 @@ import net.samge.dbController.OrderController;
 import net.samge.dbController.PlaneInfoController;
 import net.samge.dbController.UserController;
 import net.samge.model.*;
+import net.samge.utils.IdcardValidatorUtil;
 import net.samge.utils.Toast;
 
 public class UserCenterController {
@@ -36,9 +35,17 @@ public class UserCenterController {
     public User currentUser;
     public Text currentUserText;
     public AnchorPane main;
-    public JFXListView<Notification> notificationList;
+    @FXML
+    private JFXListView<Notification> notificationList;
     public Text totalPrice;
     public TableView<PriceItem> priceTable;
+    public JFXTextField phoneNumberTextField;
+    public JFXTextField IDCardNumTextField;
+    public JFXTextField userNameTextFiled;
+    public JFXButton modifyButton;
+    public JFXButton resetButton;
+    public JFXPasswordField passwordTextField;
+    public JFXTextField emailTextField;
 
 
     @FXML // ResourceBundle that was given to the FXMLLoader
@@ -73,6 +80,7 @@ public class UserCenterController {
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
     void initialize() {
+
         returnButton.setOnMouseClicked(event -> {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/FlightInfo.fxml"));
@@ -94,6 +102,8 @@ public class UserCenterController {
                 return new UserCenterController.InfoCell();
             }
         });
+
+
 
         logoutButton.setOnMouseClicked(event->{
             try {
@@ -138,11 +148,73 @@ public class UserCenterController {
                 ioException.printStackTrace();
             }
         });
+
+        // 邮箱正则
+        RegexValidator emailValidator = new RegexValidator();
+        emailValidator.setRegexPattern("^[_A-Za-z0-9-+]+(\\.[_A-Za-z0-9-]+)*@"
+                + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+        emailValidator.setMessage("邮箱格式不正确!");
+        emailTextField.getValidators().add(emailValidator);
+
+        emailTextField.focusedProperty().addListener(((observableValue, aBoolean, t1) -> {
+            if (!t1) {
+                emailTextField.validate();
+            }
+        }));
+
+        // 手机号正则
+        RegexValidator phoneNumberValidator = new RegexValidator();
+        phoneNumberValidator.setRegexPattern("^(\\+86)?1[356789]\\d{9}$");
+        phoneNumberValidator.setMessage("手机号格式不正确!");
+        phoneNumberTextField.getValidators().add(phoneNumberValidator);
+
+        phoneNumberTextField.focusedProperty().addListener(((observableValue, aBoolean, t1) -> {
+            if (!t1) {
+                phoneNumberTextField.validate();
+            }
+        }));
+        // 重置按钮
+        resetButton.setOnMouseClicked(e -> {
+            setCurrentUser(currentUser);
+        });
+
+
+        modifyButton.setOnMouseClicked(e -> {
+            // 手机号不为空，但是不通过检验，直接退出
+            if (!phoneNumberTextField.getText().trim().isEmpty() && !phoneNumberTextField.validate()) {
+                return;
+            }
+            // 邮箱不为空，但是不通过检验，则直接退出
+            if (!emailTextField.getText().trim().isEmpty() && !emailTextField.validate()) {
+                return ;
+            }
+            // 身份证不为空，但是不通过检验，直接退出
+            if (!IDCardNumTextField.getText().trim().isEmpty() && !IdcardValidatorUtil.isValidatedAllIdcard(IDCardNumTextField.getText())) {
+                return ;
+            }
+
+            currentUser.setEmail(emailTextField.getText());
+            currentUser.setUsername(userNameTextFiled.getText());
+            currentUser.setPhoneNum(phoneNumberTextField.getText());
+            currentUser.setPassword(passwordTextField.getText());
+            currentUser.setIdCardNum(IDCardNumTextField.getText());
+
+            if (!UserController.updateUserInfo(currentUser)) {
+                Toast.makeText((Stage) main.getScene().getWindow(), "更新信息失败", 3500, 500, 500);
+            } else {
+                Toast.makeText((Stage) main.getScene().getWindow(), "更新信息成功", 3500, 500, 500);
+            }
+            setCurrentUser(UserController.getUser(currentUser.getUid()));
+        });
     }
 
     public void setCurrentUser(User user) {
         currentUser = user;
         currentUserText.setText("用户 " + user.getUsername());
+        userNameTextFiled.setText(user.getUsername());
+        phoneNumberTextField.setText(user.getPhoneNum());
+        IDCardNumTextField.setText(user.getIdCardNum());
+        emailTextField.setText(user.getEmail());
 //        updateList(UserController.getAllOrdersOfUser(currentUser));
     }
 

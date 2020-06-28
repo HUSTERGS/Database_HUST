@@ -146,9 +146,6 @@ public class FlightInfoViewController {
                 .and(returnCityList.valueProperty().isNotNull())).not());
 
         searchButton.setOnMouseClicked(e -> {
-//            System.out.println(leaveDate.valueProperty().isNotNull());
-//            System.out.println(leaveCityList.selectionModelProperty().isNotNull());
-//            System.out.println(returnCityList.selectionModelProperty().isNotNull());
             updateList(PlaneInfoController.getPlaneInfos(
                     DateTimeFormatter.ofPattern("yyyy/MM/dd").format(leaveDate.getValue()),
                     leaveCityList.getValue().toString(),

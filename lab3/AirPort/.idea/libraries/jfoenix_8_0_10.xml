@@ -2,7 +2,6 @@
   <library name="jfoenix-8.0.10">
     <CLASSES>
       <root url="jar://$USER_HOME$/桌面/jfoenix-8.0.10.jar!/" />
-      <root url="jar://$USER_HOME$/桌面/controlsfx-8.40.11.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

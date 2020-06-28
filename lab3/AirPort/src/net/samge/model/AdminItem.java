@@ -66,5 +66,17 @@ public class AdminItem {
     public void setSeatRate(String seatRate) {
         this.seatRate = seatRate;
     }
+
+    @Override
+    public String toString() {
+        return "AdminItem{" +
+                "pid=" + pid +
+                ", c1='" + c1 + '\'' +
+                ", c2='" + c2 + '\'' +
+                ", date=" + date +
+                ", orderRate='" + orderRate + '\'' +
+                ", seatRate='" + seatRate + '\'' +
+                '}';
+    }
 }
 

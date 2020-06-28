@@ -19,11 +19,13 @@ create table `PlaneInfo`
 drop table if exists `Users`;
 create table `Users`
 (
-    `Uid`      int PRIMARY KEY AUTO_INCREMENT,                               -- 用户唯一标识
-    `isAdmin`  boolean                                             NOT NULL, -- 是否是管理者
-    `Email`    char(20)                                            NOT NULL, -- 邮箱，可以为空，实际操作的时候需要
-    `Password` char(18)                                            NOT NULL, -- 密码，只存储哈希值
-    `Username` char(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL
+    `Uid`       int PRIMARY KEY AUTO_INCREMENT,                               -- 用户唯一标识
+    `isAdmin`   boolean                                             NOT NULL, -- 是否是管理者
+    `Email`     char(20) UNIQUE                                     NOT NULL, -- 邮箱，可以为空，实际操作的时候需要
+    `Password`  char(18)                                            NOT NULL, -- 密码，只存储哈希值
+    `Username`  char(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL, -- 用户名
+    `IDCardNum` char(20),                                                     -- 身份证号
+    `PhoneNum`  char(20)                                                      -- 手机号
 );
 
 -- 2. 订票信息表
@@ -41,7 +43,6 @@ create table `Order`
 );
 
 
-
 -- 4. 取票通知表
 drop table if exists `Notification`;
 create table `Notification`
@@ -53,6 +54,16 @@ create table `Notification`
     CONSTRAINT `order_oid` foreign key (`Oid`) references `Order` (`Oid`) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
+
+-- 5. 座位信息
+drop table if exists `Seats`;
+create table `Seats`
+(
+    `Oid`    int,
+    `SeatNo` int,
+
+    constraint `seat_oid` foreign key (`Oid`) references `Order` (`Oid`) ON DELETE RESTRICT ON UPDATE RESTRICT
+);
 
 -- 插入航班信息
 
@@ -66,7 +77,18 @@ insert into PlaneInfo (SStation, AStation, STime, ATime, MaxCap, Company, Cost)
 VALUES ("上海", "重庆", "2020-06-18 19:15:00", "2020-06-18 22:15:00", 10, "东方航空", 600);
 
 insert into PlaneInfo (SStation, AStation, STime, ATime, MaxCap, Company, Cost)
-VALUES ("武汉", "重庆", "2020-06-17 07:20:00", "2020-06-17 08:55:00", 2, "测试人数", 620);
+VALUES ("武汉", "重庆", "2020-06-25 17:20:00", "2020-06-25 18:55:00", 2, "测试人数", 620);
+
+
+insert into PlaneInfo (SStation, AStation, STime, ATime, MaxCap, Company, Cost)
+VALUES ("武汉", "重庆", "2020-07-01 17:20:00", "2020-07-1 18:55:00", 2, "东方航空", 620);
+
+insert into PlaneInfo (SStation, AStation, STime, ATime, MaxCap, Company, Cost)
+VALUES ("武汉", "重庆", "2020-07-01 15:20:00", "2020-07-1 16:55:00", 2, "四川航空", 650);
+
+insert into PlaneInfo (SStation, AStation, STime, ATime, MaxCap, Company, Cost)
+VALUES ("武汉", "重庆", "2020-07-01 17:20:00", "2020-07-1 18:55:00", 2, "中国航空", 600);
+
 
 -- 判断某一个航班是否满员
 select count(*)
@@ -84,13 +106,17 @@ where Canceled = false
 insert into Users (isAdmin, Email, Password, Username)
 VALUES (true, "admin@qq.com", "admin", "管理员");
 -- 普通用户
-insert into Users (isAdmin, Email, Password, Username) VALUES (false, "test@test.com", "test", "测试用户1");
-
-
+insert into Users (isAdmin, Email, Password, Username)
+VALUES (false, "test@test.com", "test", "测试用户1");
 
 
 -- 时间在过去,并且已经缴费的人,才能计算满座率
-select PlaneInfo.Pid, PlaneInfo.SStation, PlaneInfo.AStation, date(PlaneInfo.STime) `SDate`, PlaneInfo.MaxCap, count(*) `Count`
+select PlaneInfo.Pid,
+       PlaneInfo.SStation,
+       PlaneInfo.AStation,
+       date(PlaneInfo.STime) `SDate`,
+       PlaneInfo.MaxCap,
+       count(*)              `Count`
 from Notification,
      PlaneInfo,
      `Order`
@@ -102,15 +128,31 @@ group by PlaneInfo.Pid;
 
 -- 时间在未来,并且order没有取消的人,才能计算预定情况
 
-select PlaneInfo.Pid, PlaneInfo.SStation, PlaneInfo.AStation, date(PlaneInfo.STime) `SDate`, PlaneInfo.MaxCap, count(*) `Count`
-from  PlaneInfo,
+select PlaneInfo.Pid,
+       PlaneInfo.SStation,
+       PlaneInfo.AStation,
+       date(PlaneInfo.STime) `SDate`,
+       PlaneInfo.MaxCap,
+       count(*)              `Count`
+from PlaneInfo,
      `Order`
 where PlaneInfo.Pid = `Order`.Pid
   and PlaneInfo.STime > now()
   and `Order`.Canceled = false
 group by PlaneInfo.Pid;
 
+update Users
+set Username='default',
+    Email='1@1.com',
+    IDCardNum='420281199911280057',
+    PhoneNum='15272052183'
+where Uid = 1;
 
+
+update Users
+set Username='default',
+    Email='1@1.com'
+where Uid = 1;
 -- 用于生成通知
 drop trigger if exists generateNotification;
 create trigger generateNotification
@@ -119,13 +161,34 @@ create trigger generateNotification
     for each row
 begin
     insert into Notification (Oid, Received, NotiDate)
-    select new.Oid, false, date(PlaneInfo.STime)
+    select new.Oid, false, date(PlaneInfo.STime) - 1
     from PlaneInfo
     where PlaneInfo.Pid = new.Pid;
-end
+end;
+
+-- 选择某一架航班的用户信息
+
+
+select `Notification`.*
+from `Notification`,
+     `Order`
+where `Order`.Oid = Notification.Oid
+  and `Order`.Uid = 2;
 
 
 
+-- String userName, String ID, String seatNo, long payed
+-- 用于获取指定的航班的基本信息
+-- 对于已经起飞的飞机，那么就只用计算满座率，认定预定并且已经缴费的人
+select Users.Username, `Order`.Pid, Seats.SeatNo, true `payed`
+from Users,
+     `Order`,
+     Notification,
+     Seats
+where Users.Uid = `Order`.Uid
+  and `Order`.Oid = Notification.Oid
+  and Notification.Received = true
+and `Order`.Pid = 1
+and Seats.Oid = `Order`.Oid;
 
-
-
+-- 对于还没有起飞的飞机，计算

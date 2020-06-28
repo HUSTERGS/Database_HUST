@@ -3,6 +3,8 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXListView?>
 <?import com.jfoenix.controls.JFXNodesList?>
+<?import com.jfoenix.controls.JFXPasswordField?>
+<?import com.jfoenix.controls.JFXTextField?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
@@ -30,7 +32,6 @@
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
                         <JFXListView fx:id="notificationList" prefHeight="392.0" prefWidth="697.0" />
-                        <JFXListView prefHeight="391.0" prefWidth="697.0" />
                      </children>
                   </AnchorPane>
             </content>
@@ -49,6 +50,21 @@
                           </columns>
                         </TableView>
                         <Text fx:id="totalPrice" layoutX="498.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="总花费" />
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+            <Tab text="个人信息">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <JFXTextField fx:id="phoneNumberTextField" labelFloat="true" layoutX="276.0" layoutY="36.0" promptText="手机号" />
+                        <JFXTextField fx:id="IDCardNumTextField" labelFloat="true" layoutX="495.0" layoutY="36.0" promptText="身份证号" />
+                        <JFXTextField fx:id="userNameTextFiled" labelFloat="true" layoutX="35.0" layoutY="36.0" promptText="用户名" />
+                        <JFXButton fx:id="modifyButton" layoutX="276.0" layoutY="204.0" style="-fx-background-color: #2196f3;" text="修改" textFill="WHITE" />
+                        <JFXButton fx:id="resetButton" layoutX="98.0" layoutY="204.0" style="-fx-background-color: #2196f3;" text="恢复默认值" textFill="WHITE" />
+                        <JFXPasswordField fx:id="passwordTextField" labelFloat="true" layoutX="35.0" layoutY="123.0" promptText="密码" />
+                        <JFXTextField fx:id="emailTextField" labelFloat="true" layoutX="276.0" layoutY="123.0" promptText="邮箱" />
                      </children>
                   </AnchorPane>
               </content>

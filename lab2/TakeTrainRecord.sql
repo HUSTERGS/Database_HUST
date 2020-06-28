@@ -105,3 +105,4 @@ call createTakeTrainRecord();
 select * from TakeTrainRecord;
 select max(SStationID) from TakeTrainRecord;
 
+

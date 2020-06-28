@@ -76,7 +76,7 @@ public class UserOrderItem {
             companyName.setText(userOrder.info.getCompany());
             startTime.setText(new SimpleDateFormat("HH:mm").format(userOrder.info.getSTime()));
             endTime.setText(new SimpleDateFormat("HH:mm").format(userOrder.info.getATime()));
-            cost.setText(Long.toString(userOrder.info.getCost()));
+            cost.setText(Long.toString(userOrder.info.getCost()) + "￥");
             flightDate.setText(new SimpleDateFormat("yyyy/MM/dd").format(userOrder.info.getSTime()));
             startCity.setText(userOrder.info.getSStation());
             endCity.setText(userOrder.info.getAStation());

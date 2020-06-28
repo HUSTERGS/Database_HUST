@@ -21,6 +21,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import net.samge.dbController.OrderController;
 import net.samge.dbController.PlaneInfoController;
+import net.samge.dbController.UserController;
 import net.samge.model.PlaneInfo;
 import net.samge.utils.Toast;
 
@@ -68,7 +69,7 @@ public class FlightInfoListItem {
             companyName.setText(info.getCompany());
             leaveTime.setText(new SimpleDateFormat("HH:mm").format(info.getSTime()));
             arriveTime.setText(new SimpleDateFormat("HH:mm").format(info.getATime()));
-            cost.setText(Long.toString(info.getCost()));
+            cost.setText(Long.toString(info.getCost()) + "￥");
 
             if (info.getSTime().before(new Timestamp(System.currentTimeMillis()))) {
                 // 早已起飞
@@ -100,6 +101,10 @@ public class FlightInfoListItem {
                     } else {
                         // 如果主页已经登陆了，那么就进行相应的插入操作，登记用户订购机票情况
 //                        Toast.makeText();
+                        if (!UserController.isUserReady(superController.currentUser.getUid())) {
+                            Toast.makeText(superStage, "请前往个人中心完善个人信息", 3500, 500, 500);
+                            return;
+                        }
                         if (OrderController.order(superController.currentUser.getUid(), info.getPid())) {
                             Toast.makeText(superStage, "订购成功", 3500, 500, 500);
                             superController.updateList(PlaneInfoController.getPlaneInfos(
